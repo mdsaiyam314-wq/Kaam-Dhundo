@@ -15,22 +15,26 @@ body{background:#f4f7fb;color:#222}
 .search{display:flex;gap:8px}
 input,textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
 .search input{margin:0;flex:1}
-button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold}
+button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold;cursor:pointer}
 .search button{border-radius:10px}
-.auth,.post-box,.location,.job{background:white;padding:18px;border-radius:14px;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.auth,.post-box,.location,.job,.apply-box{
+background:white;padding:18px;border-radius:14px;margin-bottom:20px;
+box-shadow:0 3px 10px rgba(0,0,0,.06)
+}
 .auth button,.post-box button{width:100%;margin-top:5px}
 .auth-title,.title{font-size:21px;font-weight:bold;margin-bottom:14px}
 .logout{background:#dc2626;margin-top:8px}
 .post-btn{width:100%;margin-bottom:20px;font-size:16px}
 .form{display:none}
-.categories{display:flex;gap:10px;overflow-x:auto;margin-bottom:28px}
-.category{background:white;padding:12px 16px;border-radius:20px;white-space:nowrap;border:1px solid #e5e7eb}
+.form textarea{height:90px}
 .job h3{font-size:19px;margin-bottom:7px}
 .company{color:#666;margin-bottom:8px}
 .details{color:#555;line-height:1.7;font-size:14px}
 .apply{width:100%;margin-top:13px}
 .bottom{text-align:center;padding:25px;color:#777;font-size:13px}
 #userArea{display:none}
+.apply-box{display:none}
+.apply-box button{width:100%}
 </style>
 </head>
 
@@ -64,6 +68,7 @@ button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18
 
 <div class="location">
 <b>📍 Aapki Location</b>
+<br>
 <span>Apne aas-paas kaam dhundhiye</span>
 </div>
 
@@ -81,19 +86,21 @@ button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18
 <button onclick="addJob()">Post Job</button>
 </div>
 
-<div class="title">Job Categories</div>
-
-<div class="categories">
-<div class="category">👷 Labour</div>
-<div class="category">🚚 Driver</div>
-<div class="category">🏪 Shop</div>
-<div class="category">💻 Computer</div>
-<div class="category">🔧 Mechanic</div>
-</div>
-
 <div class="title">Available Jobs</div>
 
 <div id="jobs"></div>
+
+<div id="applyBox" class="apply-box">
+
+<div class="title">📝 Job ke liye Apply karein</div>
+
+<input id="applyName" placeholder="Aapka naam">
+<input id="applyPhone" type="tel" placeholder="Mobile number">
+<textarea id="applyMessage" placeholder="Message"></textarea>
+
+<button onclick="submitApplication()">Submit Application</button>
+
+</div>
 
 </div>
 
@@ -119,9 +126,7 @@ import {
 getFirestore,
 collection,
 addDoc,
-getDocs,
-query,
-orderBy
+getDocs
 }
 from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
@@ -139,6 +144,9 @@ measurementId:"G-KLTKQS8PBS"
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
+
+let selectedJobId="";
+let selectedJobTitle="";
 
 window.registerUser=async function(){
 
@@ -276,6 +284,21 @@ div.innerHTML=`
 <button class="apply">Apply Now</button>
 `;
 
+div.querySelector(".apply").onclick=function(){
+
+if(!auth.currentUser){
+alert("Pehle Login/Register karein.");
+return;
+}
+
+selectedJobId=doc.id;
+selectedJobTitle=job.title||"Job";
+
+document.getElementById("applyBox").style.display="block";
+document.getElementById("applyBox").scrollIntoView({behavior:"smooth"});
+
+};
+
 jobsBox.appendChild(div);
 
 });
@@ -283,10 +306,54 @@ jobsBox.appendChild(div);
 }catch(error){
 
 console.log(error);
+alert("Jobs load nahi ho pa rahi hain: "+error.message);
 
 }
 
 }
+
+window.submitApplication=async function(){
+
+if(!auth.currentUser){
+alert("Pehle Login karein.");
+return;
+}
+
+const name=document.getElementById("applyName").value;
+const phone=document.getElementById("applyPhone").value;
+const message=document.getElementById("applyMessage").value;
+
+if(!name||!phone){
+alert("Naam aur mobile number bharein.");
+return;
+}
+
+try{
+
+await addDoc(collection(db,"applications"),{
+jobId:selectedJobId,
+jobTitle:selectedJobTitle,
+name:name,
+phone:phone,
+message:message,
+userId:auth.currentUser.uid,
+createdAt:Date.now()
+});
+
+alert("✅ Application successfully submit ho gayi!");
+
+document.getElementById("applyName").value="";
+document.getElementById("applyPhone").value="";
+document.getElementById("applyMessage").value="";
+document.getElementById("applyBox").style.display="none";
+
+}catch(error){
+
+alert("Application error: "+error.message);
+
+}
+
+};
 
 loadJobs();
 
