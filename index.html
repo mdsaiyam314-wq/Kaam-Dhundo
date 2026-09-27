@@ -11,24 +11,26 @@ body{background:#f4f7fb;color:#222}
 .header{background:white;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
 .logo{font-size:28px;font-weight:bold;margin-bottom:15px}
 .logo span{color:#2563eb}
-.search{display:flex;gap:8px}
-.search input{flex:1;padding:14px;border:1px solid #ddd;border-radius:10px;font-size:15px}
-.search button,.post-btn,.submit-btn{border:0;background:#2563eb;color:white;padding:12px 18px;border-radius:10px;font-weight:bold}
 .container{max-width:700px;margin:auto;padding:20px}
-.location,.post-box,.job{background:white;padding:18px;border-radius:14px;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,.06)}
-.location b{display:block;margin-bottom:5px}
-.title{font-size:21px;font-weight:bold;margin-bottom:14px}
+.search{display:flex;gap:8px}
+input,textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
+.search input{margin:0;flex:1}
+button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold}
+.search button{border-radius:10px}
+.auth,.post-box,.location,.job{background:white;padding:18px;border-radius:14px;margin-bottom:20px;box-shadow:0 3px 10px rgba(0,0,0,.06)}
+.auth button,.post-box button{width:100%;margin-top:5px}
+.auth-title,.title{font-size:21px;font-weight:bold;margin-bottom:14px}
+.logout{background:#dc2626;margin-top:8px}
+.post-btn{width:100%;margin-bottom:20px;font-size:16px}
+.form{display:none}
 .categories{display:flex;gap:10px;overflow-x:auto;margin-bottom:28px}
 .category{background:white;padding:12px 16px;border-radius:20px;white-space:nowrap;border:1px solid #e5e7eb}
-.post-btn{width:100%;margin-bottom:25px;font-size:16px}
-.form{display:none}
-.form input,.form textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
-.form textarea{height:90px}
 .job h3{font-size:19px;margin-bottom:7px}
 .company{color:#666;margin-bottom:8px}
 .details{color:#555;line-height:1.7;font-size:14px}
-.apply{width:100%;margin-top:13px;padding:12px;border:0;border-radius:9px;background:#2563eb;color:white;font-weight:bold;font-size:15px}
+.apply{width:100%;margin-top:13px}
 .bottom{text-align:center;padding:25px;color:#777;font-size:13px}
+#userArea{display:none}
 </style>
 </head>
 
@@ -45,6 +47,21 @@ body{background:#f4f7fb;color:#222}
 
 <div class="container">
 
+<div id="authBox" class="auth">
+<div class="auth-title">👤 Login / Register</div>
+
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="registerUser()">Register</button>
+<button onclick="loginUser()">Login</button>
+</div>
+
+<div id="userArea" class="auth">
+<div id="userText"></div>
+<button class="logout" onclick="logoutUser()">Logout</button>
+</div>
+
 <div class="location">
 <b>📍 Aapki Location</b>
 <span>Apne aas-paas kaam dhundhiye</span>
@@ -57,11 +74,11 @@ body{background:#f4f7fb;color:#222}
 
 <input id="jobTitle" placeholder="Job ka naam">
 <input id="company" placeholder="Company / Shop ka naam">
-<input id="location" placeholder="Location">
+<input id="jobLocation" placeholder="Location">
 <input id="salary" placeholder="Salary">
 <textarea id="description" placeholder="Job ke baare me details"></textarea>
 
-<button class="submit-btn" onclick="addJob()">Post Job</button>
+<button onclick="addJob()">Post Job</button>
 </div>
 
 <div class="title">Job Categories</div>
@@ -76,97 +93,219 @@ body{background:#f4f7fb;color:#222}
 
 <div class="title">Available Jobs</div>
 
-<div id="jobs">
+<div id="jobs"></div>
 
-<div class="job">
-<h3>Delivery Boy</h3>
-<div class="company">Local Delivery Service</div>
-<div class="details">
-📍 Nearby Location<br>
-💰 ₹12,000 – ₹18,000 / month
-</div>
-<button class="apply">Apply Now</button>
-</div>
-
-<div class="job">
-<h3>Shop Helper</h3>
-<div class="company">Local Retail Shop</div>
-<div class="details">
-📍 Nearby Location<br>
-💰 ₹9,000 – ₹13,000 / month
-</div>
-<button class="apply">Apply Now</button>
-</div>
-
-<div class="job">
-<h3>Electrician</h3>
-<div class="company">Local Service</div>
-<div class="details">
-📍 Nearby Location<br>
-💰 ₹15,000 – ₹22,000 / month
-</div>
-<button class="apply">Apply Now</button>
-</div>
-
-</div>
 </div>
 
 <div class="bottom">
 © 2026 Kaam Dhundo
 </div>
 
-<script>
-function showForm(){
-document.getElementById("postForm").style.display="block";
+<script type="module">
+
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
 }
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-function addJob(){
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+query,
+orderBy
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-const title=document.getElementById("jobTitle").value;
-const company=document.getElementById("company").value;
-const location=document.getElementById("location").value;
-const salary=document.getElementById("salary").value;
-const description=document.getElementById("description").value;
+const firebaseConfig={
+apiKey:"AIzaSyAJtBxhKNYtENtqZYTgK9o69CnRPUPFAf8",
+authDomain:"kaam-dhundo-c552e.firebaseapp.com",
+databaseURL:"https://kaam-dhundo-c552e-default-rtdb.firebaseio.com",
+projectId:"kaam-dhundo-c552e",
+storageBucket:"kaam-dhundo-c552e.firebasestorage.app",
+messagingSenderId:"1029597199334",
+appId:"1:1029597199334:web:78b338837659ae8b8d7427",
+measurementId:"G-KLTKQS8PBS"
+};
 
-if(!title || !company || !location || !salary){
-alert("Please sabhi zaroori details bharein.");
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+window.registerUser=async function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+if(!email||!password){
+alert("Email aur password bharein.");
 return;
 }
 
-const job=document.createElement("div");
-job.className="job";
+try{
+await createUserWithEmailAndPassword(auth,email,password);
+alert("✅ Registration successful!");
+}catch(error){
+alert("Registration error: "+error.message);
+}
 
-job.innerHTML=`
-<h3>${title}</h3>
-<div class="company">${company}</div>
+};
+
+window.loginUser=async function(){
+
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+try{
+await signInWithEmailAndPassword(auth,email,password);
+alert("✅ Login successful!");
+}catch(error){
+alert("Login error: "+error.message);
+}
+
+};
+
+window.logoutUser=async function(){
+await signOut(auth);
+};
+
+onAuthStateChanged(auth,user=>{
+
+if(user){
+
+document.getElementById("authBox").style.display="none";
+document.getElementById("userArea").style.display="block";
+document.getElementById("userText").innerText="Logged in: "+user.email;
+
+}else{
+
+document.getElementById("authBox").style.display="block";
+document.getElementById("userArea").style.display="none";
+
+}
+
+});
+
+window.showForm=function(){
+
+if(!auth.currentUser){
+alert("Pehle Login/Register karein.");
+return;
+}
+
+document.getElementById("postForm").style.display="block";
+
+};
+
+window.addJob=async function(){
+
+if(!auth.currentUser){
+alert("Pehle Login karein.");
+return;
+}
+
+const title=document.getElementById("jobTitle").value;
+const company=document.getElementById("company").value;
+const location=document.getElementById("jobLocation").value;
+const salary=document.getElementById("salary").value;
+const description=document.getElementById("description").value;
+
+if(!title||!company||!location||!salary){
+alert("Please zaroori details bharein.");
+return;
+}
+
+try{
+
+await addDoc(collection(db,"jobs"),{
+title:title,
+company:company,
+location:location,
+salary:salary,
+description:description,
+createdAt:Date.now(),
+userId:auth.currentUser.uid
+});
+
+alert("✅ Job Firebase me save ho gayi!");
+
+document.getElementById("postForm").style.display="none";
+
+loadJobs();
+
+}catch(error){
+
+alert("Job save error: "+error.message);
+
+}
+
+};
+
+async function loadJobs(){
+
+const jobsBox=document.getElementById("jobs");
+jobsBox.innerHTML="";
+
+try{
+
+const snapshot=await getDocs(collection(db,"jobs"));
+
+snapshot.forEach(doc=>{
+
+const job=doc.data();
+
+const div=document.createElement("div");
+div.className="job";
+
+div.innerHTML=`
+<h3>${job.title||""}</h3>
+<div class="company">${job.company||""}</div>
 <div class="details">
-📍 ${location}<br>
-💰 ${salary}<br>
-📝 ${description}
+📍 ${job.location||""}<br>
+💰 ${job.salary||""}<br>
+📝 ${job.description||""}
 </div>
 <button class="apply">Apply Now</button>
 `;
 
-document.getElementById("jobs").prepend(job);
+jobsBox.appendChild(div);
 
-alert("✅ Job successfully post ho gayi!");
+});
 
-document.getElementById("postForm").style.display="none";
+}catch(error){
+
+console.log(error);
+
 }
 
-function searchJobs(){
+}
+
+loadJobs();
+
+window.searchJobs=function(){
 
 const text=document.getElementById("searchBox").value.toLowerCase();
 const jobs=document.querySelectorAll(".job");
 
 jobs.forEach(job=>{
+
 job.style.display=
 job.innerText.toLowerCase().includes(text)
 ?"block"
 :"none";
+
 });
 
-}
+};
+
 </script>
 
 </body>
