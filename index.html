@@ -8,7 +8,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 body{background:#f4f7fb;color:#222}
-.header{background:#fff;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.header{background:white;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
 .logo{font-size:28px;font-weight:bold;margin-bottom:15px}
 .logo span{color:#2563eb}
 .search{display:flex;gap:8px}
@@ -23,7 +23,7 @@ body{background:#f4f7fb;color:#222}
 .post-btn{width:100%;margin-bottom:25px;font-size:16px}
 .form{display:none}
 .form input,.form textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
-.form textarea{height:90px;resize:none}
+.form textarea{height:90px}
 .job h3{font-size:19px;margin-bottom:7px}
 .company{color:#666;margin-bottom:8px}
 .details{color:#555;line-height:1.7;font-size:14px}
@@ -35,141 +35,137 @@ body{background:#f4f7fb;color:#222}
 <body>
 
 <div class="header">
-  <div class="logo">Kaam <span>Dhundo</span></div>
-  <div class="search">
-    <input id="searchBox" type="text" placeholder="Kaam ya job search karein">
-    <button onclick="searchJobs()">Search</button>
-  </div>
+<div class="logo">Kaam <span>Dhundo</span></div>
+
+<div class="search">
+<input id="searchBox" type="text" placeholder="Kaam ya job search karein">
+<button onclick="searchJobs()">Search</button>
+</div>
 </div>
 
 <div class="container">
 
-  <div class="location">
-    <b>📍 Aapki Location</b>
-    <span>Apne aas-paas kaam dhundhiye</span>
-  </div>
+<div class="location">
+<b>📍 Aapki Location</b>
+<span>Apne aas-paas kaam dhundhiye</span>
+</div>
 
-  <button class="post-btn" onclick="showForm()">➕ Post a Job</button>
+<button class="post-btn" onclick="showForm()">➕ Post a Job</button>
 
-  <div id="postForm" class="post-box form">
-    <div class="title">Post a Job</div>
+<div id="postForm" class="post-box form">
+<div class="title">Post a Job</div>
 
-    <input id="jobTitle" placeholder="Job ka naam">
-    <input id="company" placeholder="Company / Shop ka naam">
-    <input id="location" placeholder="Location">
-    <input id="salary" placeholder="Salary (e.g. ₹12,000/month)">
-    <textarea id="description" placeholder="Job ke baare me details"></textarea>
+<input id="jobTitle" placeholder="Job ka naam">
+<input id="company" placeholder="Company / Shop ka naam">
+<input id="location" placeholder="Location">
+<input id="salary" placeholder="Salary">
+<textarea id="description" placeholder="Job ke baare me details"></textarea>
 
-    <button class="submit-btn" onclick="addJob()">Post Job</button>
-  </div>
+<button class="submit-btn" onclick="addJob()">Post Job</button>
+</div>
 
-  <div class="title">Job Categories</div>
+<div class="title">Job Categories</div>
 
-  <div class="categories">
-    <div class="category">👷 Labour</div>
-    <div class="category">🚚 Driver</div>
-    <div class="category">🏪 Shop</div>
-    <div class="category">💻 Computer</div>
-    <div class="category">🔧 Mechanic</div>
-  </div>
+<div class="categories">
+<div class="category">👷 Labour</div>
+<div class="category">🚚 Driver</div>
+<div class="category">🏪 Shop</div>
+<div class="category">💻 Computer</div>
+<div class="category">🔧 Mechanic</div>
+</div>
 
-  <div class="title">Available Jobs</div>
+<div class="title">Available Jobs</div>
 
-  <div id="jobs">
+<div id="jobs">
 
-    <div class="job">
-      <h3>Delivery Boy</h3>
-      <div class="company">Local Delivery Service</div>
-      <div class="details">
-        📍 Nearby Location<br>
-        💰 ₹12,000 – ₹18,000 / month
-      </div>
-      <button class="apply">Apply Now</button>
-    </div>
+<div class="job">
+<h3>Delivery Boy</h3>
+<div class="company">Local Delivery Service</div>
+<div class="details">
+📍 Nearby Location<br>
+💰 ₹12,000 – ₹18,000 / month
+</div>
+<button class="apply">Apply Now</button>
+</div>
 
-    <div class="job">
-      <h3>Shop Helper</h3>
-      <div class="company">Local Retail Shop</div>
-      <div class="details">
-        📍 Nearby Location<br>
-        💰 ₹9,000 – ₹13,000 / month
-      </div>
-      <button class="apply">Apply Now</button>
-    </div>
+<div class="job">
+<h3>Shop Helper</h3>
+<div class="company">Local Retail Shop</div>
+<div class="details">
+📍 Nearby Location<br>
+💰 ₹9,000 – ₹13,000 / month
+</div>
+<button class="apply">Apply Now</button>
+</div>
 
-    <div class="job">
-      <h3>Electrician</h3>
-      <div class="company">Local Service</div>
-      <div class="details">
-        📍 Nearby Location<br>
-        💰 ₹15,000 – ₹22,000 / month
-      </div>
-      <button class="apply">Apply Now</button>
-    </div>
+<div class="job">
+<h3>Electrician</h3>
+<div class="company">Local Service</div>
+<div class="details">
+📍 Nearby Location<br>
+💰 ₹15,000 – ₹22,000 / month
+</div>
+<button class="apply">Apply Now</button>
+</div>
 
-  </div>
+</div>
 </div>
 
 <div class="bottom">
-  © 2026 Kaam Dhundo
+© 2026 Kaam Dhundo
 </div>
 
 <script>
 function showForm(){
-  document.getElementById("postForm").style.display="block";
-  document.getElementById("postForm").scrollIntoView({behavior:"smooth"});
+document.getElementById("postForm").style.display="block";
 }
 
 function addJob(){
 
-  const title=document.getElementById("jobTitle").value;
-  const company=document.getElementById("company").value;
-  const location=document.getElementById("location").value;
-  const salary=document.getElementById("salary").value;
-  const description=document.getElementById("description").value;
+const title=document.getElementById("jobTitle").value;
+const company=document.getElementById("company").value;
+const location=document.getElementById("location").value;
+const salary=document.getElementById("salary").value;
+const description=document.getElementById("description").value;
 
-  if(!title || !company || !location || !salary){
-    alert("Please sabhi zaroori details bharein.");
-    return;
-  }
+if(!title || !company || !location || !salary){
+alert("Please sabhi zaroori details bharein.");
+return;
+}
 
-  const job=document.createElement("div");
-  job.className="job";
+const job=document.createElement("div");
+job.className="job";
 
-  job.innerHTML=`
-    <h3>${title}</h3>
-    <div class="company">${company}</div>
-    <div class="details">
-      📍 ${location}<br>
-      💰 ${salary}<br>
-      📝 ${description}
-    </div>
-    <button class="apply">Apply Now</button>
-  `;
+job.innerHTML=`
+<h3>${title}</h3>
+<div class="company">${company}</div>
+<div class="details">
+📍 ${location}<br>
+💰 ${salary}<br>
+📝 ${description}
+</div>
+<button class="apply">Apply Now</button>
+`;
 
-  document.getElementById("jobs").prepend(job);
+document.getElementById("jobs").prepend(job);
 
-  alert("✅ Job successfully post ho gayi!");
+alert("✅ Job successfully post ho gayi!");
 
-  document.getElementById("postForm").style.display="none";
-
-  document.getElementById("jobTitle").value="";
-  document.getElementById("company").value="";
-  document.getElementById("location").value="";
-  document.getElementById("salary").value="";
-  document.getElementById("description").value="";
+document.getElementById("postForm").style.display="none";
 }
 
 function searchJobs(){
-  const text=document.getElementById("searchBox").value.toLowerCase();
-  const jobs=document.querySelectorAll(".job");
 
-  jobs.forEach(job=>{
-    job.style.display=
-      job.innerText.toLowerCase().includes(text)
-      ? "block"
-      : "none";
-  });
+const text=document.getElementById("searchBox").value.toLowerCase();
+const jobs=document.querySelectorAll(".job");
+
+jobs.forEach(job=>{
+job.style.display=
+job.innerText.toLowerCase().includes(text)
+?"block"
+:"none";
+});
+
 }
 </script>
 
