@@ -1,473 +1,432 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kaam Dhundo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{background:#f4f7fb;color:#222}
-.header{background:white;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-.logo{font-size:28px;font-weight:bold;margin-bottom:15px}
-.logo span{color:#2563eb}
-.container{max-width:700px;margin:auto;padding:20px}
-.search{display:flex;gap:8px}
-input,textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
-.search input{margin:0;flex:1}
-button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold}
-.search button{border-radius:10px}
-.auth,.post-box,.location,.job,.apply-box,.applications-box{
-background:white;padding:18px;border-radius:14px;margin-bottom:20px;
-box-shadow:0 3px 10px rgba(0,0,0,.06)
-}
-.auth button,.post-box button{width:100%;margin-top:5px}
-.auth-title,.title{font-size:21px;font-weight:bold;margin-bottom:14px}
-.logout{background:#dc2626;margin-top:8px}
-.post-btn{width:100%;margin-bottom:20px;font-size:16px}
-.form{display:none}
-.form textarea{height:90px}
-.job h3{font-size:19px;margin-bottom:7px}
-.company{color:#666;margin-bottom:8px}
-.details{color:#555;line-height:1.7;font-size:14px}
-.apply{width:100%;margin-top:13px}
-.apply-box{display:none}
-.apply-box button{width:100%}
-.applications-box{display:none}
-.application{
-border:1px solid #ddd;padding:14px;border-radius:10px;margin-bottom:12px
-}
-.bottom{text-align:center;padding:25px;color:#777;font-size:13px}
-#userArea{display:none}
-</style>
+    <title>Kaam Dhundo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #222;
+        }
+
+        header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 18px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .job {
+            border: 1px solid #ddd;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+
+        .job h3 {
+            margin: 0 0 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="header">
-<div class="logo">Kaam <span>Dhundo</span></div>
-
-<div class="search">
-<input id="searchBox" type="text" placeholder="Kaam ya job search karein">
-<button onclick="searchJobs()">Search</button>
-</div>
-</div>
+<header>
+    <h1>Kaam Dhundo</h1>
+    <p>Apne aas-paas ka kaam dhundhein</p>
+</header>
 
 <div class="container">
 
-<div id="authBox" class="auth">
-<div class="auth-title">👤 Login / Register</div>
+    <!-- LOCATION -->
+    <div class="card">
+        <h2>📍 Aapki Location</h2>
 
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+        <input
+            type="text"
+            id="location"
+            placeholder="Apna location likhein"
+        >
 
-<button onclick="registerUser()">Register</button>
-<button onclick="loginUser()">Login</button>
+        <button onclick="saveLocation()">
+            Location Save Karein
+        </button>
+
+        <p id="locationMessage"></p>
+    </div>
+
+
+    <!-- POST A JOB -->
+    <div class="card">
+        <h2>➕ Post a Job</h2>
+
+        <input
+            type="text"
+            id="jobTitle"
+            placeholder="Job ka naam"
+        >
+
+        <input
+            type="text"
+            id="jobLocation"
+            placeholder="Job location"
+        >
+
+        <input
+            type="text"
+            id="salary"
+            placeholder="Salary / Payment"
+        >
+
+        <textarea
+            id="jobDescription"
+            placeholder="Job ke baare mein likhein"
+        ></textarea>
+
+        <button onclick="postJob()">
+            Job Post Karein
+        </button>
+
+        <p id="postMessage"></p>
+    </div>
+
+
+    <!-- AVAILABLE JOBS -->
+    <div class="card">
+        <h2>🔎 Available Jobs</h2>
+
+        <div id="jobsList">
+            <p>Abhi koi job available nahi hai.</p>
+        </div>
+    </div>
+
+
+    <!-- MY APPLICATIONS -->
+    <div class="card">
+        <h2>📋 My Applications</h2>
+
+        <button onclick="showMyApplications()">
+            View Applications
+        </button>
+
+        <div id="myApplications"></div>
+    </div>
+
 </div>
 
-<div id="userArea" class="auth">
-<div id="userText"></div>
-<button class="logout" onclick="logoutUser()">Logout</button>
-</div>
-
-<div class="location">
-<b>📍 Aapki Location</b>
-<br>
-<span>Apne aas-paas kaam dhundhiye</span>
-</div>
-
-<button class="post-btn" onclick="showForm()">➕ Post a Job</button>
-
-<div id="postForm" class="post-box form">
-<div class="title">Post a Job</div>
-
-<input id="jobTitle" placeholder="Job ka naam">
-<input id="company" placeholder="Company / Shop ka naam">
-<input id="jobLocation" placeholder="Location">
-<input id="salary" placeholder="Salary">
-<textarea id="description" placeholder="Job ke baare me details"></textarea>
-
-<button onclick="addJob()">Post Job</button>
-</div>
-
-<div class="auth">
-<div class="auth-title">📋 My Applications</div>
-<button onclick="showMyApplications()">View Applications</button>
-</div>
-
-<div id="myApplications" class="applications-box"></div>
-
-<div class="title">Available Jobs</div>
-
-<div id="jobs"></div>
-
-<div id="applyBox" class="apply-box">
-
-<div class="title">📝 Job ke liye Apply karein</div>
-
-<input id="applyName" placeholder="Aapka naam">
-<input id="applyPhone" type="tel" placeholder="Mobile number">
-<textarea id="applyMessage" placeholder="Message"></textarea>
-
-<button onclick="submitApplication()">Submit Application</button>
-
-</div>
-
-</div>
-
-<div class="bottom">
-© 2026 Kaam Dhundo
-</div>
-
-<script type="module">
-
-import {initializeApp}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
-import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-signOut,
-onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-getDocs,
-query,
-where
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyAJtBxhKNYtENtqZYTgK9o69CnRPUPFAf8",
-authDomain:"kaam-dhundo-c552e.firebaseapp.com",
-databaseURL:"https://kaam-dhundo-c552e-default-rtdb.firebaseio.com",
-projectId:"kaam-dhundo-c552e",
-storageBucket:"kaam-dhundo-c552e.firebasestorage.app",
-messagingSenderId:"1029597199334",
-appId:"1:1029597199334:web:78b338837659ae8b8d7427",
-measurementId:"G-KLTKQS8PBS"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-let selectedJobId="";
-let selectedJobTitle="";
-
-window.registerUser=async function(){
-
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-
-if(!email||!password){
-alert("Email aur password bharein.");
-return;
-}
-
-try{
-await createUserWithEmailAndPassword(auth,email,password);
-alert("✅ Registration successful!");
-}catch(error){
-alert("Registration error: "+error.message);
-}
-
-};
-
-window.loginUser=async function(){
-
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-
-try{
-await signInWithEmailAndPassword(auth,email,password);
-alert("✅ Login successful!");
-}catch(error){
-alert("Login error: "+error.message);
-}
-
-};
-
-window.logoutUser=async function(){
-await signOut(auth);
-};
-
-onAuthStateChanged(auth,user=>{
-
-if(user){
-
-document.getElementById("authBox").style.display="none";
-document.getElementById("userArea").style.display="block";
-document.getElementById("userText").innerText="Logged in: "+user.email;
-
-}else{
-
-document.getElementById("authBox").style.display="block";
-document.getElementById("userArea").style.display="none";
-
-}
-
-});
-
-window.showForm=function(){
-
-if(!auth.currentUser){
-alert("Pehle Login/Register karein.");
-return;
-}
-
-document.getElementById("postForm").style.display="block";
-
-};
-
-window.addJob=async function(){
-
-if(!auth.currentUser){
-alert("Pehle Login karein.");
-return;
-}
-
-const title=document.getElementById("jobTitle").value;
-const company=document.getElementById("company").value;
-const location=document.getElementById("jobLocation").value;
-const salary=document.getElementById("salary").value;
-const description=document.getElementById("description").value;
-
-if(!title||!company||!location||!salary){
-alert("Please zaroori details bharein.");
-return;
-}
-
-try{
-
-await addDoc(collection(db,"jobs"),{
-title:title,
-company:company,
-location:location,
-salary:salary,
-description:description,
-createdAt:Date.now(),
-userId:auth.currentUser.uid
-});
-
-alert("✅ Job Firebase me save ho gayi!");
-
-document.getElementById("postForm").style.display="none";
-
-loadJobs();
-
-}catch(error){
-
-alert("Job save error: "+error.message);
-
-}
-
-};
-
-async function loadJobs(){
-
-const jobsBox=document.getElementById("jobs");
-jobsBox.innerHTML="";
-
-try{
-
-const snapshot=await getDocs(collection(db,"jobs"));
-
-snapshot.forEach(doc=>{
-
-const job=doc.data();
-
-const div=document.createElement("div");
-div.className="job";
-
-div.innerHTML=`
-<h3>${job.title||""}</h3>
-<div class="company">${job.company||""}</div>
-<div class="details">
-📍 ${job.location||""}<br>
-💰 ${job.salary||""}<br>
-📝 ${job.description||""}
-</div>
-<button class="apply">Apply Now</button>
-`;
-
-div.querySelector(".apply").onclick=function(){
-
-if(!auth.currentUser){
-alert("Pehle Login/Register karein.");
-return;
-}
-
-selectedJobId=doc.id;
-selectedJobTitle=job.title||"Job";
-
-document.getElementById("applyBox").style.display="block";
-document.getElementById("applyBox").scrollIntoView({behavior:"smooth"});
-
-};
-
-jobsBox.appendChild(div);
-
-});
-
-}catch(error){
-
-console.log(error);
-
-}
-
-}
-
-window.submitApplication=async function(){
-
-if(!auth.currentUser){
-alert("Pehle Login karein.");
-return;
-}
-
-const name=document.getElementById("applyName").value;
-const phone=document.getElementById("applyPhone").value;
-const message=document.getElementById("applyMessage").value;
-
-if(!name||!phone){
-alert("Naam aur mobile number bharein.");
-return;
-}
-
-try{
-
-await addDoc(collection(db,"applications"),{
-jobId:selectedJobId,
-jobTitle:selectedJobTitle,
-name:name,
-phone:phone,
-message:message,
-userId:auth.currentUser.uid,
-createdAt:Date.now()
-});
-
-alert("✅ Application successfully submit ho gayi!");
-
-document.getElementById("applyName").value="";
-document.getElementById("applyPhone").value="";
-document.getElementById("applyMessage").value="";
-document.getElementById("applyBox").style.display="none";
-
-}catch(error){
-
-alert("Application error: "+error.message);
-
-}
-
-};
-
-window.showMyApplications=async function(){
-
-if(!auth.currentUser){
-alert("Pehle Login/Register karein.");
-return;
-}
-
-const box=document.getElementById("myApplications");
-
-box.style.display="block";
-box.innerHTML="<b>Applications load ho rahi hain...</b>";
-
-try{
-
-const jobsSnapshot=await getDocs(
-query(
-collection(db,"jobs"),
-where("userId","==",auth.currentUser.uid)
-)
-);
-
-const myJobs={};
-
-jobsSnapshot.forEach(doc=>{
-myJobs[doc.id]=doc.data();
-});
-
-const applicationsSnapshot=await getDocs(
-collection(db,"applications")
-);
-
-box.innerHTML="";
-
-let found=false;
-
-applicationsSnapshot.forEach(doc=>{
-
-const application=doc.data();
-
-if(myJobs[application.jobId]){
-
-found=true;
-
-const div=document.createElement("div");
-div.className="application";
-
-div.innerHTML=`
-<b>Job:</b> ${application.jobTitle||""}<br>
-<b>Name:</b> ${application.name||""}<br>
-<b>Mobile:</b> ${application.phone||""}<br>
-<b>Message:</b> ${application.message||"No message"}
-`;
-
-box.appendChild(div);
-
-}
-
-});
-
-if(!found){
-
-box.innerHTML="<p>Abhi aapki jobs par koi application nahi aayi.</p>";
-
-}
-
-}catch(error){
-
-box.innerHTML="<p>Applications load error: "+error.message+"</p>";
-
-}
-
-};
-
-loadJobs();
-
-window.searchJobs=function(){
-
-const text=document.getElementById("searchBox").value.toLowerCase();
-const jobs=document.querySelectorAll(".job");
-
-jobs.forEach(job=>{
-
-job.style.display=
-job.innerText.toLowerCase().includes(text)
-?"block"
-:"none";
-
-});
-
-};
 
 <script>
-function showMyApplications() {
-    const box = document.getElementById("myApplications");
 
-    box.innerHTML = `
-        <h3>My Applications</h3>
-        <p>Abhi tak aapne kisi job ke liye apply nahi kiya hai.</p>
-    `;
-}
+    // JOB DATA
+    let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
+    let applications =
+        JSON.parse(localStorage.getItem("applications")) || [];
+
+
+    // SAVE LOCATION
+    function saveLocation() {
+
+        const location =
+            document.getElementById("location").value.trim();
+
+        if (location === "") {
+            alert("Please apna location likhein.");
+            return;
+        }
+
+        localStorage.setItem("userLocation", location);
+
+        document.getElementById("locationMessage").innerHTML =
+            "✅ Location save ho gayi: " + location;
+    }
+
+
+    // POST JOB
+    function postJob() {
+
+        const title =
+            document.getElementById("jobTitle").value.trim();
+
+        const location =
+            document.getElementById("jobLocation").value.trim();
+
+        const salary =
+            document.getElementById("salary").value.trim();
+
+        const description =
+            document.getElementById("jobDescription").value.trim();
+
+
+        if (title === "" || location === "") {
+            alert("Job name aur location zaroor likhein.");
+            return;
+        }
+
+
+        const job = {
+            id: Date.now(),
+            title: title,
+            location: location,
+            salary: salary,
+            description: description
+        };
+
+
+        jobs.push(job);
+
+        localStorage.setItem(
+            "jobs",
+            JSON.stringify(jobs)
+        );
+
+
+        document.getElementById("jobTitle").value = "";
+        document.getElementById("jobLocation").value = "";
+        document.getElementById("salary").value = "";
+        document.getElementById("jobDescription").value = "";
+
+
+        document.getElementById("postMessage").innerHTML =
+            "✅ Job successfully post ho gayi!";
+
+
+        displayJobs();
+    }
+
+
+    // DISPLAY JOBS
+    function displayJobs() {
+
+        const jobsList =
+            document.getElementById("jobsList");
+
+
+        if (jobs.length === 0) {
+
+            jobsList.innerHTML =
+                "<p>Abhi koi job available nahi hai.</p>";
+
+            return;
+        }
+
+
+        jobsList.innerHTML = "";
+
+
+        jobs.forEach(function(job) {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "job";
+
+
+            div.innerHTML = `
+                <h3>${job.title}</h3>
+
+                <p>📍 ${job.location}</p>
+
+                <p>💰 ${job.salary || "Payment details nahi di gayi"}</p>
+
+                <p>${job.description || ""}</p>
+
+                <button onclick="applyJob(${job.id})">
+                    Apply Karein
+                </button>
+            `;
+
+
+            jobsList.appendChild(div);
+
+        });
+    }
+
+
+    // APPLY FOR JOB
+    function applyJob(jobId) {
+
+        const job =
+            jobs.find(function(item) {
+                return item.id === jobId;
+            });
+
+
+        if (!job) {
+            alert("Job nahi mili.");
+            return;
+        }
+
+
+        const alreadyApplied =
+            applications.some(function(app) {
+                return app.jobId === jobId;
+            });
+
+
+        if (alreadyApplied) {
+            alert("Aap is job ke liye already apply kar chuke hain.");
+            return;
+        }
+
+
+        applications.push({
+            jobId: job.id,
+            title: job.title,
+            location: job.location,
+            salary: job.salary
+        });
+
+
+        localStorage.setItem(
+            "applications",
+            JSON.stringify(applications)
+        );
+
+
+        alert("✅ Job ke liye application submit ho gayi!");
+
+    }
+
+
+    // SHOW MY APPLICATIONS
+    function showMyApplications() {
+
+        const box =
+            document.getElementById("myApplications");
+
+
+        if (applications.length === 0) {
+
+            box.innerHTML = `
+                <p>Abhi tak aapne kisi job ke liye apply nahi kiya hai.</p>
+            `;
+
+            return;
+        }
+
+
+        box.innerHTML = `
+            <h3>Aapki Applications</h3>
+        `;
+
+
+        applications.forEach(function(app) {
+
+            const div =
+                document.createElement("div");
+
+            div.className = "job";
+
+
+            div.innerHTML = `
+                <h3>${app.title}</h3>
+
+                <p>📍 ${app.location}</p>
+
+                <p>💰 ${app.salary || "Payment details nahi di gayi"}</p>
+
+                <p class="success">
+                    ✅ Applied
+                </p>
+            `;
+
+
+            box.appendChild(div);
+
+        });
+
+    }
+
+
+    // LOAD SAVED LOCATION
+    const savedLocation =
+        localStorage.getItem("userLocation");
+
+
+    if (savedLocation) {
+
+        document.getElementById("location").value =
+            savedLocation;
+
+    }
+
+
+    // LOAD JOBS
+    displayJobs();
+
 </script>
-}
-</script></body>
+
+</body>
 </html>
