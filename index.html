@@ -15,9 +15,9 @@ body{background:#f4f7fb;color:#222}
 .search{display:flex;gap:8px}
 input,textarea{width:100%;padding:13px;margin-bottom:12px;border:1px solid #ddd;border-radius:9px;font-size:15px}
 .search input{margin:0;flex:1}
-button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold;cursor:pointer}
+button{border:0;border-radius:9px;background:#2563eb;color:white;padding:12px 18px;font-weight:bold}
 .search button{border-radius:10px}
-.auth,.post-box,.location,.job,.apply-box{
+.auth,.post-box,.location,.job,.apply-box,.applications-box{
 background:white;padding:18px;border-radius:14px;margin-bottom:20px;
 box-shadow:0 3px 10px rgba(0,0,0,.06)
 }
@@ -31,10 +31,14 @@ box-shadow:0 3px 10px rgba(0,0,0,.06)
 .company{color:#666;margin-bottom:8px}
 .details{color:#555;line-height:1.7;font-size:14px}
 .apply{width:100%;margin-top:13px}
-.bottom{text-align:center;padding:25px;color:#777;font-size:13px}
-#userArea{display:none}
 .apply-box{display:none}
 .apply-box button{width:100%}
+.applications-box{display:none}
+.application{
+border:1px solid #ddd;padding:14px;border-radius:10px;margin-bottom:12px
+}
+.bottom{text-align:center;padding:25px;color:#777;font-size:13px}
+#userArea{display:none}
 </style>
 </head>
 
@@ -66,12 +70,7 @@ box-shadow:0 3px 10px rgba(0,0,0,.06)
 <button class="logout" onclick="logoutUser()">Logout</button>
 </div>
 
-<div class="location"> <div class="auth">
-  <div class="auth-title">📋 My Applications</div>
-  <button onclick="showMyApplications()">View Applications</button>
-</div>
-
-<div id="myApplications"></div>
+<div class="location">
 <b>📍 Aapki Location</b>
 <br>
 <span>Apne aas-paas kaam dhundhiye</span>
@@ -90,6 +89,13 @@ box-shadow:0 3px 10px rgba(0,0,0,.06)
 
 <button onclick="addJob()">Post Job</button>
 </div>
+
+<div class="auth">
+<div class="auth-title">📋 My Applications</div>
+<button onclick="showMyApplications()">View Applications</button>
+</div>
+
+<div id="myApplications" class="applications-box"></div>
 
 <div class="title">Available Jobs</div>
 
@@ -131,7 +137,9 @@ import {
 getFirestore,
 collection,
 addDoc,
-getDocs
+getDocs,
+query,
+where
 }
 from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
@@ -311,7 +319,6 @@ jobsBox.appendChild(div);
 }catch(error){
 
 console.log(error);
-alert("Jobs load nahi ho pa rahi hain: "+error.message);
 
 }
 
@@ -355,6 +362,79 @@ document.getElementById("applyBox").style.display="none";
 }catch(error){
 
 alert("Application error: "+error.message);
+
+}
+
+};
+
+window.showMyApplications=async function(){
+
+if(!auth.currentUser){
+alert("Pehle Login/Register karein.");
+return;
+}
+
+const box=document.getElementById("myApplications");
+
+box.style.display="block";
+box.innerHTML="<b>Applications load ho rahi hain...</b>";
+
+try{
+
+const jobsSnapshot=await getDocs(
+query(
+collection(db,"jobs"),
+where("userId","==",auth.currentUser.uid)
+)
+);
+
+const myJobs={};
+
+jobsSnapshot.forEach(doc=>{
+myJobs[doc.id]=doc.data();
+});
+
+const applicationsSnapshot=await getDocs(
+collection(db,"applications")
+);
+
+box.innerHTML="";
+
+let found=false;
+
+applicationsSnapshot.forEach(doc=>{
+
+const application=doc.data();
+
+if(myJobs[application.jobId]){
+
+found=true;
+
+const div=document.createElement("div");
+div.className="application";
+
+div.innerHTML=`
+<b>Job:</b> ${application.jobTitle||""}<br>
+<b>Name:</b> ${application.name||""}<br>
+<b>Mobile:</b> ${application.phone||""}<br>
+<b>Message:</b> ${application.message||"No message"}
+`;
+
+box.appendChild(div);
+
+}
+
+});
+
+if(!found){
+
+box.innerHTML="<p>Abhi aapki jobs par koi application nahi aayi.</p>";
+
+}
+
+}catch(error){
+
+box.innerHTML="<p>Applications load error: "+error.message+"</p>";
 
 }
 
