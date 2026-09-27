@@ -66,7 +66,12 @@ box-shadow:0 3px 10px rgba(0,0,0,.06)
 <button class="logout" onclick="logoutUser()">Logout</button>
 </div>
 
-<div class="location">
+<div class="location"> <div class="auth">
+  <div class="auth-title">📋 My Applications</div>
+  <button onclick="showMyApplications()">View Applications</button>
+</div>
+
+<div id="myApplications"></div>
 <b>📍 Aapki Location</b>
 <br>
 <span>Apne aas-paas kaam dhundhiye</span>
